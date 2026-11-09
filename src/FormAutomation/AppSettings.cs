@@ -26,7 +26,8 @@ public record AppSettings
             .Build()
             .Get<AppSettings>() ?? new AppSettings();
 
-        if (!Uri.TryCreate(settings.BaseUrl, UriKind.Absolute, out _))
+        if (!Uri.TryCreate(settings.BaseUrl, UriKind.Absolute, out var uri) ||
+            uri.Scheme is not ("http" or "https" or "file"))
         {
             throw new InvalidOperationException(
                 $"BaseUrl must be an absolute URL (http, https or file), got: '{settings.BaseUrl}'");
