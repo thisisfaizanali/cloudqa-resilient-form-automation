@@ -49,7 +49,11 @@ public static class FieldLocator
     {
         var candidates = Candidates(scope, kind);
         if (candidates.Count > 0)
+        {
             AddProximity(candidates, kind, Anchors(scope, label));
+            AddExplicitAssociation(candidates, kind, label);
+            AddAttributeHints(candidates, label);
+        }
         return Choose(kind, label, candidates);
     }
 
@@ -104,6 +108,78 @@ public static class FieldLocator
                 if (inside.Count == 1) inside[0].Add(80, "proximity");
                 break;
             }
+        }
+    }
+
+    /// <summary>100 points when a real label, aria attribute or fieldset legend names the control.</summary>
+    private static void AddExplicitAssociation(List<Candidate> candidates, Kind kind, string label)
+    {
+        var wanted = TextMatch.Normalize(label);
+        foreach (var c in candidates)
+        {
+            var reason = kind.Grouped ? GroupAssociation(c.Primary, wanted) : ControlAssociation(c.Primary, wanted);
+            if (reason is not null) c.Add(100, reason);
+        }
+    }
+
+    private static string? ControlAssociation(IWebElement element, string wanted)
+    {
+        var id = element.GetDomAttribute("id");
+        if (!string.IsNullOrEmpty(id) &&
+            element.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Any(l => OwnText(l) == wanted))
+            return "label-for";
+        if (element.FindElements(By.XPath("ancestor::label")).Any(l => OwnText(l) == wanted))
+            return "wrapping-label";
+        return AriaAssociation(element, wanted);
+    }
+
+    private static string? GroupAssociation(IWebElement firstRadio, string wanted)
+    {
+        foreach (var fieldset in firstRadio.FindElements(By.XPath("ancestor::fieldset[1]")))
+        {
+            if (fieldset.FindElements(By.XPath("./legend")).Any(l => OwnText(l) == wanted)) return "legend";
+            if (AriaAssociation(fieldset, wanted) is { } viaFieldset) return viaFieldset;
+        }
+        foreach (var group in firstRadio.FindElements(By.XPath("ancestor::*[@role='radiogroup'][1]")))
+            if (AriaAssociation(group, wanted) is { } viaRole) return viaRole;
+        return null;
+    }
+
+    private static string? AriaAssociation(IWebElement element, string wanted)
+    {
+        if (TextMatch.Normalize(element.GetDomAttribute("aria-label")) == wanted) return "aria-label";
+
+        var ids = (element.GetDomAttribute("aria-labelledby") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var id in ids)
+            if (element.FindElements(By.XPath($"//*[@id={Literal(id)}]")).Any(e => OwnText(e) == wanted))
+                return "aria-labelledby";
+        return null;
+    }
+
+    /// <summary>Normalized text of an element without the form controls it wraps.</summary>
+    private static string OwnText(IWebElement element)
+    {
+        var js = (IJavaScriptExecutor)((IWrapsDriver)element).WrappedDriver;
+        var text = js.ExecuteScript(
+            "var c = arguments[0].cloneNode(true);" +
+            "c.querySelectorAll('input,select,textarea,button').forEach(function (e) { e.remove(); });" +
+            "return c.textContent;", element) as string;
+        return TextMatch.Normalize(text);
+    }
+
+    /// <summary>40 points for a matching placeholder or title, 20 for an id/name that reads as the label.</summary>
+    private static void AddAttributeHints(List<Candidate> candidates, string label)
+    {
+        var wanted = TextMatch.Normalize(label);
+        foreach (var c in candidates)
+        {
+            var e = c.Primary;
+            if (TextMatch.Normalize(e.GetDomAttribute("placeholder")) == wanted) c.Add(40, "placeholder");
+            else if (TextMatch.Normalize(e.GetDomAttribute("title")) == wanted) c.Add(40, "title");
+
+            if (TextMatch.MatchesIdentifier(e.GetDomAttribute("name"), label) ||
+                TextMatch.MatchesIdentifier(e.GetDomAttribute("id"), label))
+                c.Add(20, "name/id");
         }
     }
 
