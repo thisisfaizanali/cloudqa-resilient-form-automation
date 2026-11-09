@@ -160,6 +160,31 @@ public class FieldLocatorTests
     }
 
     [Test]
+    public void SingleTextBoxLabelledAsAnotherField_IsNotReturnedForState()
+    {
+        Load("""
+            <div>
+              <div><label>State</label><select><option>A</option></select></div>
+              <div><label for="c1">Country</label><input id="c1" type="text"></div>
+            </div>
+            """);
+        var ex = Assert.Throws<FieldResolutionException>(() => FieldLocator.FindTextBox(_driver, "State"))!;
+        Assert.That(ex.Message, Does.Contain("labelled as").And.Contain("country"));
+    }
+
+    [Test]
+    public void FirstNameWithoutItsInput_DoesNotReturnLastNameBox()
+    {
+        Load("""
+            <div>
+              <div><label>First Name</label></div>
+              <div><label for="l1">Last Name</label><input id="l1" type="text"></div>
+            </div>
+            """);
+        Assert.Throws<FieldResolutionException>(() => FieldLocator.FindTextBox(_driver, "First Name"));
+    }
+
+    [Test]
     public void RandomizedIdsNamesAndClasses_StillFound()
     {
         Load("""
