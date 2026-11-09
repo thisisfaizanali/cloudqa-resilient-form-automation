@@ -13,6 +13,8 @@ public static class DriverFactory
             options.AddArgument("--window-size=1366,900");
         }
 
-        return new ChromeDriver(options);
+        var driver = new ChromeDriver(options);
+        driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(settings.TimeoutSeconds);
+        return driver;
     }
 }
