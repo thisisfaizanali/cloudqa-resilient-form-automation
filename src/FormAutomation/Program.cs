@@ -6,14 +6,20 @@ try
     var driver = DriverFactory.Create(settings);
     try
     {
-        driver.Navigate().GoToUrl(settings.BaseUrl);
-        Console.WriteLine(driver.Title);
+        var results = FormChecks.Run(driver, settings, out var scopeNote);
+        Console.WriteLine($"Page:  {settings.BaseUrl}");
+        Console.WriteLine($"Scope: {scopeNote}");
+        foreach (var r in results)
+            Console.WriteLine($"{(r.Passed ? "PASS" : "FAIL")}  {r.Field,-10}  {r.Detail}");
+
+        var passed = results.Count(r => r.Passed);
+        Console.WriteLine($"Result: {passed}/{results.Count} passed");
+        return passed == results.Count ? 0 : 1;
     }
     finally
     {
         driver.Quit();
     }
-    return 0;
 }
 catch (Exception ex)
 {

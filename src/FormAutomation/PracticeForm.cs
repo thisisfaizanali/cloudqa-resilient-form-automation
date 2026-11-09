@@ -22,11 +22,12 @@ public class PracticeForm(ISearchContext scope)
         FieldResolutionException? last = null;
         try
         {
-            return new WebDriverWait(driver, timeout).Until(d =>
+            var opened = new WebDriverWait(driver, timeout).Until(d =>
             {
                 try { return TryOpen(d, out last); }
                 catch (StaleElementReferenceException) { return null; }
-            }).Value;
+            })!;
+            return (opened.Form, opened.Note);
         }
         catch (WebDriverTimeoutException)
         {
@@ -34,7 +35,9 @@ public class PracticeForm(ISearchContext scope)
         }
     }
 
-    private static (PracticeForm, string)? TryOpen(IWebDriver driver, out FieldResolutionException? error)
+    private sealed record Opened(PracticeForm Form, string Note);
+
+    private static Opened? TryOpen(IWebDriver driver, out FieldResolutionException? error)
     {
         error = null;
         var forms = driver.FindElements(By.TagName("form")).Where(f => f.Displayed).ToList();
@@ -50,14 +53,14 @@ public class PracticeForm(ISearchContext scope)
         }
 
         if (holders.Count == 1)
-            return (new PracticeForm(holders[0].Form), $"form {holders[0].Number} of {forms.Count} on the page");
+            return new(new PracticeForm(holders[0].Form), $"form {holders[0].Number} of {forms.Count} on the page");
         if (holders.Count > 1)
-            return (new PracticeForm(holders[0].Form), $"{holders.Count} forms contain all three fields, using the first");
+            return new(new PracticeForm(holders[0].Form), $"{holders.Count} forms contain all three fields, using the first");
 
         try
         {
             ResolveAll(driver);
-            return (new PracticeForm(driver), "no single form, searched the whole document");
+            return new(new PracticeForm(driver), "no single form, searched the whole document");
         }
         catch (FieldResolutionException ex)
         {
@@ -93,6 +96,8 @@ public class PracticeForm(ISearchContext scope)
             return checkedRadio is null ? null : FieldLocator.RadioOptionText(checkedRadio);
         }
     }
+
+    public int CheckedGenderCount => FieldLocator.FindRadioGroup(Scope, GenderLabel).Count(r => r.Selected);
 
     public void SelectState(string option)
     {

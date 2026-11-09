@@ -7,12 +7,16 @@ public record AppSettings
     public string BaseUrl { get; init; } = "";
     public bool Headless { get; init; }
     public int TimeoutSeconds { get; init; }
+    public TestDataSettings TestData { get; init; } = new();
 
     private static readonly Dictionary<string, string> SwitchMappings = new()
     {
         ["--url"] = nameof(BaseUrl),
         ["--headless"] = nameof(Headless),
         ["--timeout"] = nameof(TimeoutSeconds),
+        ["--first-name"] = $"{nameof(TestData)}:{nameof(TestDataSettings.FirstName)}",
+        ["--gender"] = $"{nameof(TestData)}:{nameof(TestDataSettings.Gender)}",
+        ["--state"] = $"{nameof(TestData)}:{nameof(TestDataSettings.State)}",
     };
 
     // Precedence, lowest to highest: appsettings.json, CLOUDQA_ environment variables, command line.
@@ -35,4 +39,11 @@ public record AppSettings
 
         return settings;
     }
+}
+
+public record TestDataSettings
+{
+    public string FirstName { get; init; } = "";
+    public string Gender { get; init; } = "";
+    public string State { get; init; } = "";
 }
