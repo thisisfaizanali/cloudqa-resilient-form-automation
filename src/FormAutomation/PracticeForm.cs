@@ -13,6 +13,66 @@ public class PracticeForm(ISearchContext scope)
 
     private ISearchContext Scope { get; } = scope;
 
+    /// <summary>
+    /// Waits for the form that holds all three fields. Iframes and shadow roots are never entered, on purpose:
+    /// their copies of the fields are not part of the main form.
+    /// </summary>
+    public static (PracticeForm Form, string ScopeNote) Open(IWebDriver driver, TimeSpan timeout)
+    {
+        FieldResolutionException? last = null;
+        try
+        {
+            return new WebDriverWait(driver, timeout).Until(d =>
+            {
+                try { return TryOpen(d, out last); }
+                catch (StaleElementReferenceException) { return null; }
+            }).Value;
+        }
+        catch (WebDriverTimeoutException)
+        {
+            throw last ?? new FieldResolutionException($"Timed out after {timeout.TotalSeconds:0}s waiting for the page to settle");
+        }
+    }
+
+    private static (PracticeForm, string)? TryOpen(IWebDriver driver, out FieldResolutionException? error)
+    {
+        error = null;
+        var forms = driver.FindElements(By.TagName("form")).Where(f => f.Displayed).ToList();
+        var holders = new List<(IWebElement Form, int Number)>();
+        for (var i = 0; i < forms.Count; i++)
+        {
+            try
+            {
+                ResolveAll(forms[i]);
+                holders.Add((forms[i], i + 1));
+            }
+            catch (FieldResolutionException) { }
+        }
+
+        if (holders.Count == 1)
+            return (new PracticeForm(holders[0].Form), $"form {holders[0].Number} of {forms.Count} on the page");
+        if (holders.Count > 1)
+            return (new PracticeForm(holders[0].Form), $"{holders.Count} forms contain all three fields, using the first");
+
+        try
+        {
+            ResolveAll(driver);
+            return (new PracticeForm(driver), "no single form, searched the whole document");
+        }
+        catch (FieldResolutionException ex)
+        {
+            error = ex;
+            return null;
+        }
+    }
+
+    private static void ResolveAll(ISearchContext scope)
+    {
+        FieldLocator.FindTextBox(scope, FirstNameLabel);
+        FieldLocator.FindRadioGroup(scope, GenderLabel);
+        FieldLocator.FindSelect(scope, StateLabel);
+    }
+
     public void SetFirstName(string value)
     {
         var box = FieldLocator.FindTextBox(Scope, FirstNameLabel);
