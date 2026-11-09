@@ -45,6 +45,19 @@ public static class FieldLocator
     public static IReadOnlyList<IWebElement> FindRadioGroup(ISearchContext scope, string label)
         => Resolve(scope, label, RadioKind).Members;
 
+    public static IWebElement FindRadioOption(ISearchContext scope, string groupLabel, string optionText)
+    {
+        var wanted = TextMatch.Normalize(optionText);
+        var options = FindRadioGroup(scope, groupLabel).Select(r => (Radio: r, Text: OptionText(r))).ToList();
+        var hits = options.Where(o => TextMatch.Normalize(o.Text) == wanted).ToList();
+        if (hits.Count == 1) return hits[0].Radio;
+
+        var available = string.Join(", ", options.Select(o => $"\"{o.Text}\""));
+        throw new FieldResolutionException(
+            $"{(hits.Count == 0 ? "No" : "Ambiguous")} radio option \"{optionText}\" in group \"{groupLabel}\": " +
+            $"{hits.Count} matches. Available options: {available}");
+    }
+
     private static Candidate Resolve(ISearchContext scope, string label, Kind kind)
     {
         var candidates = Candidates(scope, kind);
@@ -154,6 +167,34 @@ public static class FieldLocator
             if (element.FindElements(By.XPath($"//*[@id={Literal(id)}]")).Any(e => OwnText(e) == wanted))
                 return "aria-labelledby";
         return null;
+    }
+
+    /// <summary>
+    /// Visible text of a radio: wrapping label, then label[for], then the text after it up to the next
+    /// control (for-attributes on spans are ignored on purpose), then its value.
+    /// </summary>
+    private static string OptionText(IWebElement radio)
+    {
+        var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+        if (wrapping is not null) return wrapping;
+
+        var id = radio.GetDomAttribute("id");
+        if (!string.IsNullOrEmpty(id))
+        {
+            var linked = radio.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+            if (linked is not null) return linked;
+        }
+
+        var js = (IJavaScriptExecutor)((IWrapsDriver)radio).WrappedDriver;
+        var following = js.ExecuteScript(
+            "var n = arguments[0].nextSibling, t = '', sel = 'input,select,textarea,button';" +
+            "while (n) {" +
+            "  if (n.nodeType === 1 && (n.matches(sel) || n.querySelector(sel))) break;" +
+            "  t += n.textContent; n = n.nextSibling;" +
+            "}" +
+            "return t;", radio) as string;
+        var text = TextMatch.Normalize(following);
+        return text.Length > 0 ? text : TextMatch.Normalize(radio.GetDomAttribute("value"));
     }
 
     /// <summary>Normalized text of an element without the form controls it wraps.</summary>
