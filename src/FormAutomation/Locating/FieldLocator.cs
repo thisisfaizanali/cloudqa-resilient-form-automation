@@ -50,7 +50,7 @@ public static class FieldLocator
     public static IWebElement FindRadioOption(ISearchContext scope, string groupLabel, string optionText)
     {
         var wanted = TextMatch.Normalize(optionText);
-        var options = FindRadioGroup(scope, groupLabel).Select(r => (Radio: r, Text: OptionText(r))).ToList();
+        var options = FindRadioGroup(scope, groupLabel).Select(r => (Radio: r, Text: RadioOptionText(r))).ToList();
         var hits = options.Where(o => TextMatch.Normalize(o.Text) == wanted).ToList();
         if (hits.Count == 1) return hits[0].Radio;
 
@@ -185,7 +185,7 @@ public static class FieldLocator
     /// Visible text of a radio: wrapping label, then label[for], then the text after it up to the next
     /// control (for-attributes on spans are ignored on purpose), then its value.
     /// </summary>
-    private static string OptionText(IWebElement radio)
+    public static string RadioOptionText(IWebElement radio)
     {
         var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
         if (wrapping is not null) return wrapping;
