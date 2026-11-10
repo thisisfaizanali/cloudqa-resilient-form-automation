@@ -142,7 +142,7 @@ public class FieldLocatorTests
         Assert.That(FieldLocator.FindRadioOption(_driver, "Gender", "Transgender").GetDomAttribute("value"), Is.EqualTo("Transgender"));
 
         var ex = Assert.Throws<FieldResolutionException>(() => FieldLocator.FindRadioOption(_driver, "Gender", "Other"))!;
-        Assert.That(ex.Message, Does.Contain("male").And.Contain("female").And.Contain("transgender"));
+        Assert.That(ex.Message, Does.Contain("\"Male\"").And.Contain("\"Female\"").And.Contain("\"Transgender\""));
     }
 
     [Test]

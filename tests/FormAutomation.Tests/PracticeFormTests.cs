@@ -40,16 +40,16 @@ public class PracticeFormTests
     public void Gender_SelectsOnlyTheRequestedOption(string option)
     {
         _form.SelectGender(option);
-        Assert.That(_form.SelectedGender, Is.EqualTo(TextMatch.Normalize(option)));
+        Assert.That(_form.SelectedGender, Is.EqualTo(option));
         Assert.That(_form.CheckedGenderCount, Is.EqualTo(1));
     }
 
     [Test]
     public void Gender_SwitchingLeavesOnlyTheLastChoice()
     {
-        _form.SelectGender("Male");
-        _form.SelectGender("Female");
-        Assert.That(_form.SelectedGender, Is.EqualTo("female"));
+        _form.SelectGender("male");
+        _form.SelectGender("female");
+        Assert.That(_form.SelectedGender, Is.EqualTo("Female"));
         Assert.That(_form.CheckedGenderCount, Is.EqualTo(1));
     }
 

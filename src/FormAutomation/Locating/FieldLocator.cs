@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 
 namespace FormAutomation.Locating;
@@ -185,18 +186,18 @@ public static class FieldLocator
     }
 
     /// <summary>
-    /// Visible text of a radio: wrapping label, then label[for], then the text after it up to the next
+    /// Display text (original case) of a radio: wrapping label, then label[for], then the text after it up to the next
     /// control (for-attributes on spans are ignored on purpose), then its value.
     /// </summary>
     public static string RadioOptionText(IWebElement radio)
     {
-        var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+        var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(DisplayText).FirstOrDefault(HasText);
         if (wrapping is not null) return wrapping;
 
         var id = radio.GetDomAttribute("id");
         if (!string.IsNullOrEmpty(id))
         {
-            var linked = radio.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+            var linked = radio.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Select(DisplayText).FirstOrDefault(HasText);
             if (linked is not null) return linked;
         }
 
@@ -208,19 +209,28 @@ public static class FieldLocator
             "  t += n.textContent; n = n.nextSibling;" +
             "}" +
             "return t;", radio) as string;
-        var text = TextMatch.Normalize(following);
-        return text.Length > 0 ? text : TextMatch.Normalize(radio.GetDomAttribute("value"));
+        var text = Collapse(following);
+        return HasText(text) ? text : Collapse(radio.GetDomAttribute("value"));
     }
 
+    private static bool HasText(string? text) => TextMatch.Normalize(text).Length > 0;
+
+    /// <summary>Whitespace collapsed and trimmed, original case kept.</summary>
+    private static string Collapse(string? text) => Regex.Replace(text ?? "", @"\s+", " ").Trim();
+
     /// <summary>Normalized text of an element without the form controls it wraps.</summary>
-    private static string OwnText(IWebElement element)
+    private static string OwnText(IWebElement element) => TextMatch.Normalize(RawOwnText(element));
+
+    private static string DisplayText(IWebElement element) => Collapse(RawOwnText(element));
+
+    private static string RawOwnText(IWebElement element)
     {
         var js = (IJavaScriptExecutor)((IWrapsDriver)element).WrappedDriver;
         var text = js.ExecuteScript(
             "var c = arguments[0].cloneNode(true);" +
             "c.querySelectorAll('input,select,textarea,button').forEach(function (e) { e.remove(); });" +
             "return c.textContent;", element) as string;
-        return TextMatch.Normalize(text);
+        return text ?? "";
     }
 
     /// <summary>40 points for a matching placeholder or title, 20 for an id/name that reads as the label.</summary>
