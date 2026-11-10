@@ -77,7 +77,7 @@ The brief lists the kinds of change the page may receive. Each one has a local c
 | All of the above at once | `combined.html` | All mechanisms together |
 | A field removed (negative case) | `missing-state.html` | The run must fail: all three lines FAIL with `Form not resolved: No select found for label "State"` and the exit code is 1 |
 
-`baseline.html` is the unchanged live page and checks that the variants differ only where intended. The locator itself is also covered by small inline fixtures in `FieldLocatorTests`, and the live page by `PracticeFormTests`.
+`baseline.html` is an unchanged copy of the live form, showing the checks work offline before any change is applied. The locator itself is also covered by small inline fixtures in `FieldLocatorTests`, and the live page by `PracticeFormTests`.
 
 ## Limitations
 

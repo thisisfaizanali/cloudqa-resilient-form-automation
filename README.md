@@ -28,7 +28,7 @@ dotnet run --project src/FormAutomation
 Chrome opens a visible window. For a run without a window:
 
 ```bash
-dotnet run --project src/FormAutomation --headless true
+dotnet run --project src/FormAutomation -- --headless true
 ```
 
 Sample output:
@@ -49,13 +49,13 @@ Pass the page with `--url`. It must be an absolute `http`, `https` or `file` URL
 A remote page:
 
 ```bash
-dotnet run --project src/FormAutomation --headless true --url https://example.com/my-modified-form
+dotnet run --project src/FormAutomation -- --headless true --url https://example.com/my-modified-form
 ```
 
 A local HTML file (this one ships with the repo; use your own path):
 
 ```bash
-dotnet run --project src/FormAutomation --headless true --url file:///C:/path/to/cloudqa-resilient-form-automation/variants/combined.html
+dotnet run --project src/FormAutomation -- --headless true --url file:///C:/path/to/cloudqa-resilient-form-automation/variants/combined.html
 ```
 
 On Linux or macOS the file URL looks like `file:///home/you/cloudqa-resilient-form-automation/variants/combined.html`.
@@ -66,14 +66,14 @@ Every setting has a default in `src/FormAutomation/appsettings.json` and can be 
 
 | Setting | `appsettings.json` key | Environment variable | Command line flag | Default |
 |---|---|---|---|---|
-| Page URL | `BaseUrl` | `CLOUDQA_BaseUrl` | `--url` | `https://app.cloudqa.io/home/AutomationPracticeForm` |
-| Hide the browser window | `Headless` | `CLOUDQA_Headless` | `--headless` | `false` |
-| Wait limit in seconds (page load and field lookup) | `TimeoutSeconds` | `CLOUDQA_TimeoutSeconds` | `--timeout` | `30` |
-| Value typed into First Name | `TestData:FirstName` | `CLOUDQA_TestData__FirstName` | `--first-name` | `John` |
-| Gender option to select | `TestData:Gender` | `CLOUDQA_TestData__Gender` | `--gender` | `Male` |
-| State option to select | `TestData:State` | `CLOUDQA_TestData__State` | `--state` | `India` |
+| Page URL | `BaseUrl` | `CLOUDQA_BASEURL` | `--url` | `https://app.cloudqa.io/home/AutomationPracticeForm` |
+| Hide the browser window | `Headless` | `CLOUDQA_HEADLESS` | `--headless` | `false` |
+| Wait limit in seconds (page load and field lookup) | `TimeoutSeconds` | `CLOUDQA_TIMEOUTSECONDS` | `--timeout` | `30` |
+| Value typed into First Name | `TestData:FirstName` | `CLOUDQA_TESTDATA__FIRSTNAME` | `--first-name` | `John` |
+| Gender option to select | `TestData:Gender` | `CLOUDQA_TESTDATA__GENDER` | `--gender` | `Male` |
+| State option to select | `TestData:State` | `CLOUDQA_TESTDATA__STATE` | `--state` | `India` |
 
-Precedence, lowest to highest: `appsettings.json`, then environment variables, then command line flags. Nested keys in environment variables use a double underscore. Flags take their value as the next argument, for example `--headless true`. Environment variable names are not case sensitive on Windows.
+Precedence, lowest to highest: `appsettings.json`, then environment variables, then command line flags. Nested keys in environment variables use a double underscore. Program flags go after the `--` that follows the `dotnet run` arguments, and take their value as the next argument, for example `-- --headless true`. .NET configuration matches keys case-insensitively, so `CLOUDQA_BASEURL` sets `BaseUrl`.
 
 PowerShell:
 
@@ -89,7 +89,7 @@ bash:
 CLOUDQA_BASEURL=file:///home/you/cloudqa-resilient-form-automation/variants/reordered.html CLOUDQA_HEADLESS=true dotnet run --project src/FormAutomation
 ```
 
-Test values can be changed the same way, for example `--gender Female --state Canada`. The Gender and State values are matched against the visible option text, ignoring case and surrounding spaces.
+Test values can be changed the same way, for example `-- --gender Female --state Canada`. The Gender and State values are matched against the visible option text, ignoring case and surrounding spaces.
 
 ## Output and exit codes
 
