@@ -30,6 +30,29 @@ public class FieldLocatorTests
     }
 
     [Test]
+    public void LabelFor_ContradictedByLayout_IsIgnored()
+    {
+        Load("""
+            <div><label for="fname">First Name</label><input id="lname" data-t="target"></div>
+            <div><label for="lname">Last Name</label><input id="fname" data-t="other"></div>
+            """);
+        Assert.That(Tag(FieldLocator.FindTextBox(_driver, "First Name")), Is.EqualTo("target"));
+    }
+
+    [Test]
+    public void LabelFor_InFlatContainer_StillDecides()
+    {
+        Load("""
+            <div>
+              <label for="a">First Name</label><label for="b">Last Name</label>
+              <input id="b" data-t="other"><input id="a" data-t="target">
+            </div>
+            """);
+        Assert.That(Tag(FieldLocator.FindTextBox(_driver, "First Name")), Is.EqualTo("target"));
+        Assert.That(Tag(FieldLocator.FindTextBox(_driver, "Last Name")), Is.EqualTo("other"));
+    }
+
+    [Test]
     public void WrappingLabel_Association()
     {
         Load("""

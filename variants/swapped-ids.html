@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Practice form (baseline)</title>
+</head>
+<body>
+    <div class="container">
+            <form method="post" class="well" id="automationtestform" action="/Home/AutomationPracticeForm">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h2>Form</h2>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="fname" name="fname" class="control-label">First Name</label>
+                        <input id="lname" type="text" name="First Name" class="form-control" placeholder="Name" />
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="lname" name="lname" class="control-label">Last Name</label>
+                        <input id="fname" type="text" name="Last Name" class="form-control" placeholder="Surname" />
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label">Gender</label>
+                        <div class="col-lg-12">
+                            <input id="male" type="radio" name="gender" value="Male" />
+                            <span name="male" for="male" class="control-label">Male</span>
+                            <input id="female" type="radio" name="gender" value="Female" />
+                            <span name="female" for="female" class="control-label">Female</span>
+                            <input id="transgender" type="radio" name="gender" value="Transgender" />
+                            <span name="transgender" for="female" class="control-label">Transgender</span>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="dob" name="dob" class="control-label">Date of Birth</label>
+                        <input id="dob" type="text" name="Date of Birth" placeholder="YYYY-MM-DD" required
+                               pattern="^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$"
+                               title="Enter a date in this format YYYY-MM-DD" class="form-control" />
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label name="mobile" for="mobile" class="control-label">Mobile #</label>
+                        <input id="mobile" name="Mobile Number" class="form-control" type="number" maxlength="10" pattern=".{10}" placeholder="Mobile Number" />
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label name="email" for="email" class="control-label">Email</label>
+                        <input id="email" type="text" name="Email" class="form-control" placeholder="Email" />
+                    </div>
+                    <div class="autocomplete form-group col-xs-6">
+                        <label name="Country" for="country" class="control-label"> Country </label>
+                        <input id="country" type="text" name="Country" placeholder="Country" class="form-control" />
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label name="State" for="state" class="control-label"> State </label>
+                        <select class="form-control" id="state" name="State">
+                            <option> -- Select Country -- </option>
+                            <option value="Afganistan"> Afganistan </option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Cuba">Cuba</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="Finland">Finland</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Greece">Greece</option>
+                            <option value="Greenland">Greenland</option>
+                            <option value="Hong Kong">Hong Kong</option>
+                            <option value="India">India</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Nepal">Nepal</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Philippines">Philippines</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Zimbabwe">Zimbabwe</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-xs-12">
+                        <label class="control-label">Hobbies</label>
+                        <input type="checkbox" id="Dance" Value="Dance" name="Hobbies" />
+                        <span name="Dance" for="Dance">Dance</span>
+                        <input type="checkbox" id="Reading" Value="Reading" name="Hobbies" />
+                        <span name="Reading" for="Reading">Reading</span>
+                        <input type="checkbox" id="Cricket" Value="Cricket" name="Hobbies" />
+                        <span name="Cricket" for="Cricket">Cricket</span>
+                    </div>
+                    <div class="form-group col-xs-12">
+                        <label class="control-label">About Yourself</label>
+                        <textarea class="form-control" rows="3" placeholder="About Yourself" name="About"></textarea>
+                    </div>
+                    <div class="form-group col-xs-12">
+                        <label class="control-label">Description</label>
+                        <textarea id="mytextarea"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-user"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Username" name="Username" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <input type="file" name="pic" class="btn btn-default" />
+                            </div>
+                            <div class="col-xs-2">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Know about us
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="//app.cloudqa.io" target="_blank">Applcation Login</a></li>
+                                        <li><a href="//cloudqa.io" target="_blank">Cloudqa Site</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" placeholder="Password" name="Password" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" placeholder="Confirm Password" name="Confirm Password" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="checkbox" id="Agree" Value="Agree" name="Agree" required />
+                        I agree to <a href="#">terms & comments</a>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit" Value="submit">Submit</button>
+                    <button class="btn btn-primary" type="reset" Value="reset">Reset</button>
+                    <a href="//app.cloudqa.io" class="btn btn-primary">Cancel</a>
+                </div>
+            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8PfpPsGuHZdPik6nHW7xCQDIN_QnOMpShcoyaVTocraTtDZw6dpkGp9puoFA4vorWsyYfkKEkxCPggY1BeC9onENTwl2XcBW0mRlE0UCs0InC-MWLfhdbvujzPbXiOdKPuhDEqrdmsPjOFrmPVGrNxo" /></form>
+    </div>
+</body>
+</html>

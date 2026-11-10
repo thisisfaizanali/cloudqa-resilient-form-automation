@@ -31,12 +31,22 @@ public class VariantTests
 
     [Test, Combinatorial]
     public void AllChecksPass(
-        [Values("baseline", "reordered", "renamed-attributes", "restructured", "lookalikes", "combined")] string variant,
+        [Values("baseline", "reordered", "renamed-attributes", "restructured", "lookalikes", "combined", "swapped-ids")] string variant,
         [Values("John|Male|India", "Faizan|Transgender|Afganistan")] string data)
     {
         var d = data.Split('|');
         var results = Run(variant, d[0], d[1], d[2]);
         Assert.That(results, Has.All.Property(nameof(CheckResult.Passed)).True, Details(results));
+    }
+
+    [Test]
+    public void SwappedIds_FillsTheBoxNextToTheFirstNameLabel()
+    {
+        var results = Run("swapped-ids", "John", "Male", "India");
+        Assert.That(results, Has.All.Property(nameof(CheckResult.Passed)).True, Details(results));
+        // The input with id "fname" is the Last Name box in this variant; "lname" is the First Name box.
+        Assert.That(_driver.FindElement(By.Id("fname")).GetDomProperty("value"), Is.Empty);
+        Assert.That(_driver.FindElement(By.Id("lname")).GetDomProperty("value"), Is.EqualTo("John"));
     }
 
     [Test]
