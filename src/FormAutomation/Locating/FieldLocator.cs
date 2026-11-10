@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 
 namespace FormAutomation.Locating;
@@ -10,6 +11,9 @@ public static class FieldLocator
 {
     private const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const string Lower = "abcdefghijklmnopqrstuvwxyz";
+
+    // A label, aria, placeholder, title or proximity signal is required; name/id hints (20) only break ties.
+    private const int MinimumScore = 40;
 
     private sealed record Kind(string Name, string XPath, bool Grouped);
 
@@ -50,7 +54,7 @@ public static class FieldLocator
     public static IWebElement FindRadioOption(ISearchContext scope, string groupLabel, string optionText)
     {
         var wanted = TextMatch.Normalize(optionText);
-        var options = FindRadioGroup(scope, groupLabel).Select(r => (Radio: r, Text: OptionText(r))).ToList();
+        var options = FindRadioGroup(scope, groupLabel).Select(r => (Radio: r, Text: RadioOptionText(r))).ToList();
         var hits = options.Where(o => TextMatch.Normalize(o.Text) == wanted).ToList();
         if (hits.Count == 1) return hits[0].Radio;
 
@@ -182,18 +186,18 @@ public static class FieldLocator
     }
 
     /// <summary>
-    /// Visible text of a radio: wrapping label, then label[for], then the text after it up to the next
+    /// Display text (original case) of a radio: wrapping label, then label[for], then the text after it up to the next
     /// control (for-attributes on spans are ignored on purpose), then its value.
     /// </summary>
-    private static string OptionText(IWebElement radio)
+    public static string RadioOptionText(IWebElement radio)
     {
-        var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+        var wrapping = radio.FindElements(By.XPath("ancestor::label")).Select(DisplayText).FirstOrDefault(HasText);
         if (wrapping is not null) return wrapping;
 
         var id = radio.GetDomAttribute("id");
         if (!string.IsNullOrEmpty(id))
         {
-            var linked = radio.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Select(OwnText).FirstOrDefault(t => t.Length > 0);
+            var linked = radio.FindElements(By.XPath($"//label[@for={Literal(id)}]")).Select(DisplayText).FirstOrDefault(HasText);
             if (linked is not null) return linked;
         }
 
@@ -205,19 +209,28 @@ public static class FieldLocator
             "  t += n.textContent; n = n.nextSibling;" +
             "}" +
             "return t;", radio) as string;
-        var text = TextMatch.Normalize(following);
-        return text.Length > 0 ? text : TextMatch.Normalize(radio.GetDomAttribute("value"));
+        var text = Collapse(following);
+        return HasText(text) ? text : Collapse(radio.GetDomAttribute("value"));
     }
 
+    private static bool HasText(string? text) => TextMatch.Normalize(text).Length > 0;
+
+    /// <summary>Whitespace collapsed and trimmed, original case kept.</summary>
+    private static string Collapse(string? text) => Regex.Replace(text ?? "", @"\s+", " ").Trim();
+
     /// <summary>Normalized text of an element without the form controls it wraps.</summary>
-    private static string OwnText(IWebElement element)
+    private static string OwnText(IWebElement element) => TextMatch.Normalize(RawOwnText(element));
+
+    private static string DisplayText(IWebElement element) => Collapse(RawOwnText(element));
+
+    private static string RawOwnText(IWebElement element)
     {
         var js = (IJavaScriptExecutor)((IWrapsDriver)element).WrappedDriver;
         var text = js.ExecuteScript(
             "var c = arguments[0].cloneNode(true);" +
             "c.querySelectorAll('input,select,textarea,button').forEach(function (e) { e.remove(); });" +
             "return c.textContent;", element) as string;
-        return TextMatch.Normalize(text);
+        return text ?? "";
     }
 
     /// <summary>40 points for a matching placeholder or title, 20 for an id/name that reads as the label.</summary>
@@ -242,8 +255,14 @@ public static class FieldLocator
     private static Candidate Choose(Kind kind, string label, List<Candidate> candidates)
     {
         var ranked = candidates.OrderByDescending(c => c.Score).ToList();
-        if (ranked.Count == 0 || ranked[0].Score == 0)
-            throw FieldResolutionException.NotFound(kind.Name, label, ranked.Select(c => c.Info()).ToList());
+        if (ranked.Count == 0 || ranked[0].Score < MinimumScore)
+        {
+            var notFound = FieldResolutionException.NotFound(kind.Name, label, ranked.Select(c => c.Info()).ToList());
+            if (ranked.Count > 0 && ranked[0].Score > 0)
+                throw new FieldResolutionException(
+                    notFound.Message + " Only name/id hints matched, which cannot select a field on their own.");
+            throw notFound;
+        }
 
         var tied = ranked.Where(c => c.Score == ranked[0].Score).ToList();
         if (tied.Count > 1)

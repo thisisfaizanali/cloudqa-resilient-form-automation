@@ -142,7 +142,7 @@ public class FieldLocatorTests
         Assert.That(FieldLocator.FindRadioOption(_driver, "Gender", "Transgender").GetDomAttribute("value"), Is.EqualTo("Transgender"));
 
         var ex = Assert.Throws<FieldResolutionException>(() => FieldLocator.FindRadioOption(_driver, "Gender", "Other"))!;
-        Assert.That(ex.Message, Does.Contain("male").And.Contain("female").And.Contain("transgender"));
+        Assert.That(ex.Message, Does.Contain("\"Male\"").And.Contain("\"Female\"").And.Contain("\"Transgender\""));
     }
 
     [Test]
@@ -182,6 +182,14 @@ public class FieldLocatorTests
             </div>
             """);
         Assert.Throws<FieldResolutionException>(() => FieldLocator.FindTextBox(_driver, "First Name"));
+    }
+
+    [Test]
+    public void NameHintAlone_DoesNotSelectAField()
+    {
+        Load("""<input type="text" name="first_name"><input type="text" name="other">""");
+        var ex = Assert.Throws<FieldResolutionException>(() => FieldLocator.FindTextBox(_driver, "First Name"))!;
+        Assert.That(ex.Message, Does.Contain("Only name/id hints matched"));
     }
 
     [Test]
