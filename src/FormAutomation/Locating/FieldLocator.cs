@@ -120,27 +120,43 @@ public static class FieldLocator
     {
         foreach (var anchor in anchors)
         {
-            for (IWebElement? node = anchor; node is not null; node = Parent(node))
-            {
-                var present = Displayed(node, kind).ToHashSet();
-                var inside = candidates.Where(c => c.Members.All(present.Contains)).ToList();
-                if (inside.Count == 0) continue;
-                if (inside.Count == 1 && inside[0].OwnedBy is null) inside[0].Add(80, "proximity");
-                break;
-            }
+            var inside = Nearest(candidates, kind, anchor);
+            if (inside.Count == 1 && inside[0].OwnedBy is null) inside[0].Add(80, "proximity");
         }
+    }
+
+    /// <summary>The candidates in the first ancestor of the anchor (itself included) that holds any; empty if none does.</summary>
+    private static List<Candidate> Nearest(List<Candidate> candidates, Kind kind, IWebElement anchor)
+    {
+        for (IWebElement? node = anchor; node is not null; node = Parent(node))
+        {
+            var present = Displayed(node, kind).ToHashSet();
+            var inside = candidates.Where(c => c.Members.All(present.Contains)).ToList();
+            if (inside.Count > 0) return inside;
+        }
+        return [];
     }
 
     /// <summary>
     /// A label, aria attribute or fieldset legend that names the control earns 100 points. If the control
     /// is named by a different text only, it is "owned" by that other field and skips proximity.
+    /// label-for and aria-labelledby are id references, as fragile as ids, so one is ignored when the layout
+    /// shows the referenced label sits next to a different control.
     /// </summary>
     private static void AddExplicitAssociation(List<Candidate> candidates, Kind kind, string label)
     {
         var wanted = TextMatch.Normalize(label);
         foreach (var c in candidates)
         {
-            var found = (kind.Grouped ? GroupAssociations(c.Primary) : ControlAssociations(c.Primary))
+            bool Contradicted(IWebElement labelElement, string link)
+            {
+                var near = Nearest(candidates, kind, labelElement);
+                if (near.Count != 1 || near[0] == c) return false;
+                c.Add(0, $"ignored {link} contradicted by layout");
+                return true;
+            }
+
+            var found = (kind.Grouped ? GroupAssociations(c.Primary, Contradicted) : ControlAssociations(c.Primary, Contradicted))
                 .Where(a => a.Text.Length > 0).ToList();
             var match = found.FirstOrDefault(a => a.Text == wanted);
             if (match.Reason is not null) c.Add(100, match.Reason);
@@ -152,37 +168,40 @@ public static class FieldLocator
         }
     }
 
-    private static IEnumerable<(string Reason, string Text)> ControlAssociations(IWebElement element)
+    private static IEnumerable<(string Reason, string Text)> ControlAssociations(
+        IWebElement element, Func<IWebElement, string, bool> contradicted)
     {
         var id = element.GetDomAttribute("id");
         if (!string.IsNullOrEmpty(id))
             foreach (var l in element.FindElements(By.XPath($"//label[@for={Literal(id)}]")))
-                yield return ("label-for", OwnText(l));
+                if (!contradicted(l, "label-for")) yield return ("label-for", OwnText(l));
         foreach (var l in element.FindElements(By.XPath("ancestor::label")))
             yield return ("wrapping-label", OwnText(l));
-        foreach (var a in AriaAssociations(element)) yield return a;
+        foreach (var a in AriaAssociations(element, contradicted)) yield return a;
     }
 
-    private static IEnumerable<(string Reason, string Text)> GroupAssociations(IWebElement firstRadio)
+    private static IEnumerable<(string Reason, string Text)> GroupAssociations(
+        IWebElement firstRadio, Func<IWebElement, string, bool> contradicted)
     {
         foreach (var fieldset in firstRadio.FindElements(By.XPath("ancestor::fieldset[1]")))
         {
             foreach (var l in fieldset.FindElements(By.XPath("./legend")))
                 yield return ("legend", OwnText(l));
-            foreach (var a in AriaAssociations(fieldset)) yield return a;
+            foreach (var a in AriaAssociations(fieldset, contradicted)) yield return a;
         }
         foreach (var group in firstRadio.FindElements(By.XPath("ancestor::*[@role='radiogroup'][1]")))
-            foreach (var a in AriaAssociations(group)) yield return a;
+            foreach (var a in AriaAssociations(group, contradicted)) yield return a;
     }
 
-    private static IEnumerable<(string Reason, string Text)> AriaAssociations(IWebElement element)
+    private static IEnumerable<(string Reason, string Text)> AriaAssociations(
+        IWebElement element, Func<IWebElement, string, bool> contradicted)
     {
         yield return ("aria-label", TextMatch.Normalize(element.GetDomAttribute("aria-label")));
 
         var ids = (element.GetDomAttribute("aria-labelledby") ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
         foreach (var id in ids)
             foreach (var e in element.FindElements(By.XPath($"//*[@id={Literal(id)}]")))
-                yield return ("aria-labelledby", OwnText(e));
+                if (!contradicted(e, "aria-labelledby")) yield return ("aria-labelledby", OwnText(e));
     }
 
     /// <summary>
