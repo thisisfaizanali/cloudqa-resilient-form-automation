@@ -129,6 +129,7 @@ The suite uses NUnit and starts headless Chrome. It covers:
 | `reordered.html` | Fields in a different order |
 | `renamed-attributes.html` | All ids, names and classes replaced with meaningless values; `label for` values no longer match any id |
 | `restructured.html` | Table layout for text fields, `fieldset` and `legend` with wrapping labels for Gender, State inside extra wrapper divs, labels `First name:` and `State *` |
+| `swapped-ids.html` | The ids of the First Name and Last Name inputs swapped, labels untouched, so each `label for` points at the other box |
 | `lookalikes.html` | Extra newsletter form with its own `First Name` field, a hidden `First Name` field, `Father's First Name`, `Middle Name`, `Preferred Contact Gender` and `State of Birth` |
 | `combined.html` | Reordering, random attributes, restructuring and look-alikes together |
 | `missing-state.html` | The State field removed; the run is expected to fail |

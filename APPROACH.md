@@ -30,6 +30,7 @@ All of this is in `Locating/FieldLocator.cs` and `Locating/TextMatch.cs`.
 Rules around the scores:
 
 - **Owned by another label.** If a control is explicitly tied to a different text (for example `label for` pointing at "Last Name"), it gets no proximity points. This stops a neighbouring field from being taken because it sits next to the right label.
+- **Id-based links must agree with the layout.** `label for` and `aria-labelledby` are id references, as fragile as ids. If the walk from the referenced label (the same walk as proximity) reaches exactly one control and it is a different one than the link points to, the link is ignored: no 100 points, no ownership, and the reason `ignored label-for contradicted by layout` appears in error messages. So a page with swapped ids is read by what it shows. When the layout gives no single answer (several controls in one container), the link still decides. Wrapping labels, `aria-label`, legends and radiogroup aria are not id-based and are unchanged.
 - **Minimum score of 40.** Ids and names alone (20) never select a field; they only break ties between candidates that already have a label, proximity, placeholder or title signal.
 - **Ambiguity or no match is an error.** If the best score is below 40 the field is "not found". If two or more candidates tie for the best score the field is "ambiguous". Either way the program does not guess: it throws an error that lists every candidate with its tag, type, id, name, score and the reasons behind the score.
 
@@ -72,6 +73,7 @@ The brief lists the kinds of change the page may receive. Each one has a local c
 |---|---|---|
 | Field order changed | `reordered.html` | Nothing depends on position. Fields are tied to their labels, not to their place in the DOM |
 | Ids, names and classes changed | `renamed-attributes.html` | Ids, names and classes are not used to select a field (name and id only add 20 points). The `label for` values here point at ids that no longer exist, so the fields are found by proximity |
+| Ids swapped between fields | `swapped-ids.html` | The First Name and Last Name ids are swapped, so each `label for` points at the other box. The links contradict the layout and are ignored; the box next to the label is chosen, and a test checks that the other box stays empty |
 | Structure changed | `restructured.html` | Table cells (proximity walks up from the label to the first ancestor with a control), `fieldset` and `legend`, wrapping labels, extra wrapper divs, label text such as `First name:` and `State *` (normalization) |
 | Look-alike fields added | `lookalikes.html` | A second form with its own "First Name" (form choice), a hidden "First Name" (not displayed, so ignored), "Father's First Name" and "Middle Name" (not an exact label match), "State of Birth" (a select owned by a different label) and "Preferred Contact Gender" (a second radio group with different label text) |
 | All of the above at once | `combined.html` | All mechanisms together |
@@ -85,6 +87,7 @@ The brief lists the kinds of change the page may receive. Each one has a local c
 - **Labels and controls sharing one container.** If several labels and their inputs sit in one container with no per-field wrapper and no `label for`, aria or legend link, proximity gives no answer for any of them. The result is a "No text box found" error listing the candidates with score 0, not a wrong pick.
 - **A decoy with the same label text.** Two visible fields with the same label text and the same score are reported as ambiguous. If a decoy scores higher than the real field (for example the decoy has a `label for` and the real one only proximity), the decoy is chosen.
 - **Several forms with all three fields.** The first one in document order is used. This is reported in the Scope line but not treated as an error.
+- **Radio option text still trusts `label for`.** When a radio has no wrapping label, its option text comes from the `label` whose `for` equals its id. If the radio ids are swapped on such a page, the wrong option could be selected. The contradiction rule above applies to finding the group, not to option text.
 - **The three fields are resolved as a unit.** If one is missing or ambiguous, the form is not resolved and all three checks fail with `Form not resolved`, even though the other two fields might exist.
 - **Iframes and shadow DOM** are not searched.
 - **Only native controls.** First Name must be an `<input>` of a text-like type, Gender must be radio inputs and State must be a real `<select>`. A custom dropdown built from divs is not recognized.
