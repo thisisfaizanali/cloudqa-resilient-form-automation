@@ -14,8 +14,8 @@ ChromeDriver is downloaded and matched to your Chrome by Selenium Manager, so th
 ## Setup
 
 ```bash
-git clone https://github.com/thisisfaizanali/cloudqa-t1.git
-cd cloudqa-t1
+git clone https://github.com/thisisfaizanali/cloudqa-resilient-form-automation.git
+cd cloudqa-resilient-form-automation
 dotnet build
 ```
 
@@ -55,10 +55,10 @@ dotnet run --project src/FormAutomation --headless true --url https://example.co
 A local HTML file (this one ships with the repo; use your own path):
 
 ```bash
-dotnet run --project src/FormAutomation --headless true --url file:///C:/path/to/cloudqa-t1/variants/combined.html
+dotnet run --project src/FormAutomation --headless true --url file:///C:/path/to/cloudqa-resilient-form-automation/variants/combined.html
 ```
 
-On Linux or macOS the file URL looks like `file:///home/you/cloudqa-t1/variants/combined.html`.
+On Linux or macOS the file URL looks like `file:///home/you/cloudqa-resilient-form-automation/variants/combined.html`.
 
 ## Configuration
 
@@ -78,7 +78,7 @@ Precedence, lowest to highest: `appsettings.json`, then environment variables, t
 PowerShell:
 
 ```powershell
-$env:CLOUDQA_BASEURL = "file:///C:/path/to/cloudqa-t1/variants/reordered.html"
+$env:CLOUDQA_BASEURL = "file:///C:/path/to/cloudqa-resilient-form-automation/variants/reordered.html"
 $env:CLOUDQA_HEADLESS = "true"
 dotnet run --project src/FormAutomation
 ```
@@ -86,7 +86,7 @@ dotnet run --project src/FormAutomation
 bash:
 
 ```bash
-CLOUDQA_BASEURL=file:///home/you/cloudqa-t1/variants/reordered.html CLOUDQA_HEADLESS=true dotnet run --project src/FormAutomation
+CLOUDQA_BASEURL=file:///home/you/cloudqa-resilient-form-automation/variants/reordered.html CLOUDQA_HEADLESS=true dotnet run --project src/FormAutomation
 ```
 
 Test values can be changed the same way, for example `--gender Female --state Canada`. The Gender and State values are matched against the visible option text, ignoring case and surrounding spaces.
