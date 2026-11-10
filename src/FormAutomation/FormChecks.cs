@@ -19,11 +19,12 @@ public static class FormChecks
         catch (Exception ex)
         {
             scopeNote = "not resolved";
+            var detail = $"Form not resolved: {ex.Message}";
             return
             [
-                new(PracticeForm.FirstNameLabel, false, ex.Message),
-                new(PracticeForm.GenderLabel, false, ex.Message),
-                new(PracticeForm.StateLabel, false, ex.Message),
+                new(PracticeForm.FirstNameLabel, false, detail),
+                new(PracticeForm.GenderLabel, false, detail),
+                new(PracticeForm.StateLabel, false, detail),
             ];
         }
 
