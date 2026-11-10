@@ -185,6 +185,14 @@ public class FieldLocatorTests
     }
 
     [Test]
+    public void NameHintAlone_DoesNotSelectAField()
+    {
+        Load("""<input type="text" name="first_name"><input type="text" name="other">""");
+        var ex = Assert.Throws<FieldResolutionException>(() => FieldLocator.FindTextBox(_driver, "First Name"))!;
+        Assert.That(ex.Message, Does.Contain("Only name/id hints matched"));
+    }
+
+    [Test]
     public void RandomizedIdsNamesAndClasses_StillFound()
     {
         Load("""

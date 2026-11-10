@@ -11,6 +11,9 @@ public static class FieldLocator
     private const string Upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const string Lower = "abcdefghijklmnopqrstuvwxyz";
 
+    // A label, aria, placeholder, title or proximity signal is required; name/id hints (20) only break ties.
+    private const int MinimumScore = 40;
+
     private sealed record Kind(string Name, string XPath, bool Grouped);
 
     private static readonly Kind TextBoxKind = new("text box",
@@ -242,8 +245,14 @@ public static class FieldLocator
     private static Candidate Choose(Kind kind, string label, List<Candidate> candidates)
     {
         var ranked = candidates.OrderByDescending(c => c.Score).ToList();
-        if (ranked.Count == 0 || ranked[0].Score == 0)
-            throw FieldResolutionException.NotFound(kind.Name, label, ranked.Select(c => c.Info()).ToList());
+        if (ranked.Count == 0 || ranked[0].Score < MinimumScore)
+        {
+            var notFound = FieldResolutionException.NotFound(kind.Name, label, ranked.Select(c => c.Info()).ToList());
+            if (ranked.Count > 0 && ranked[0].Score > 0)
+                throw new FieldResolutionException(
+                    notFound.Message + " Only name/id hints matched, which cannot select a field on their own.");
+            throw notFound;
+        }
 
         var tied = ranked.Where(c => c.Score == ranked[0].Score).ToList();
         if (tied.Count > 1)
