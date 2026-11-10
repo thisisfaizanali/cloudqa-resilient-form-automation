@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Practice form (renamed attributes)</title>
+</head>
+<body>
+    <div class="container">
+            <form method="post" class="c1" id="f1" action="/Home/AutomationPracticeForm">
+                <div class="c2">
+                    <div class="c3">
+                        <h2>Form</h2>
+                    </div>
+                    <div class="c4">
+                        <label for="fname" name="x1" class="c5">First Name</label>
+                        <input id="f2" type="text" name="x2" class="c6" placeholder="Name" />
+                    </div>
+                    <div class="c4">
+                        <label for="lname" name="x3" class="c5">Last Name</label>
+                        <input id="f3" type="text" name="x4" class="c6" placeholder="Surname" />
+                    </div>
+                    <div class="c4">
+                        <label class="c5">Gender</label>
+                        <div class="c7">
+                            <input id="f4" type="radio" name="x5" value="Male" />
+                            <span name="x6" for="male" class="c5">Male</span>
+                            <input id="f5" type="radio" name="x5" value="Female" />
+                            <span name="x7" for="female" class="c5">Female</span>
+                            <input id="f6" type="radio" name="x5" value="Transgender" />
+                            <span name="x8" for="female" class="c5">Transgender</span>
+                        </div>
+                    </div>
+                    <div class="c4">
+                        <label for="dob" name="x9" class="c5">Date of Birth</label>
+                        <input id="f7" type="text" name="x10" placeholder="YYYY-MM-DD" required
+                               pattern="^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$"
+                               title="Enter a date in this format YYYY-MM-DD" class="c6" />
+                    </div>
+                    <div class="c4">
+                        <label name="x11" for="mobile" class="c5">Mobile #</label>
+                        <input id="f8" name="x12" class="c6" type="number" maxlength="10" pattern=".{10}" placeholder="Mobile Number" />
+                    </div>
+                    <div class="c4">
+                        <label name="x13" for="email" class="c5">Email</label>
+                        <input id="f9" type="text" name="x14" class="c6" placeholder="Email" />
+                    </div>
+                    <div class="c8">
+                        <label name="x15" for="country" class="c5"> Country </label>
+                        <input id="f10" type="text" name="x15" placeholder="Country" class="c6" />
+                    </div>
+                    <div class="c4">
+                        <label name="x16" for="state" class="c5"> State </label>
+                        <select class="c6" id="f11" name="x16">
+                            <option> -- Select Country -- </option>
+                            <option value="Afganistan"> Afganistan </option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Cuba">Cuba</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="Finland">Finland</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Greece">Greece</option>
+                            <option value="Greenland">Greenland</option>
+                            <option value="Hong Kong">Hong Kong</option>
+                            <option value="India">India</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Nepal">Nepal</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Philippines">Philippines</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Zimbabwe">Zimbabwe</option>
+                        </select>
+                    </div>
+                    <div class="c9">
+                        <label class="c5">Hobbies</label>
+                        <input type="checkbox" id="f12" Value="Dance" name="x17" />
+                        <span name="x18" for="Dance">Dance</span>
+                        <input type="checkbox" id="f13" Value="Reading" name="x17" />
+                        <span name="x19" for="Reading">Reading</span>
+                        <input type="checkbox" id="f14" Value="Cricket" name="x17" />
+                        <span name="x20" for="Cricket">Cricket</span>
+                    </div>
+                    <div class="c9">
+                        <label class="c5">About Yourself</label>
+                        <textarea class="c6" rows="3" placeholder="About Yourself" name="x21"></textarea>
+                    </div>
+                    <div class="c9">
+                        <label class="c5">Description</label>
+                        <textarea id="f15"></textarea>
+                    </div>
+                </div>
+                <div class="c2">
+                    <div class="c3">
+                        <div class="c2">
+                            <div class="c10">
+                                <div class="c11">
+                                    <div class="c12">
+                                        <span class="c13">
+                                            <i class="c14"></i>
+                                        </span>
+                                        <input type="text" class="c6" placeholder="Username" name="x22" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c15">
+                                <input type="file" name="x23" class="c16" />
+                            </div>
+                            <div class="c17">
+                                <div class="c18">
+                                    <button class="c19" type="button" data-toggle="dropdown">
+                                        Know about us
+                                        <span class="c20"></span>
+                                    </button>
+                                    <ul class="c21">
+                                        <li><a href="//app.cloudqa.io" target="_blank">Applcation Login</a></li>
+                                        <li><a href="//cloudqa.io" target="_blank">Cloudqa Site</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c10">
+                        <div class="c11">
+                            <div class="c12">
+                                <span class="c13">
+                                    <i class="c22"></i>
+                                </span>
+                                <input type="password" class="c6" placeholder="Password" name="x24" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c10">
+                        <div class="c11">
+                            <div class="c12">
+                                <span class="c13">
+                                    <i class="c22"></i>
+                                </span>
+                                <input type="password" class="c6" placeholder="Confirm Password" name="x25" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c2">
+                    <div class="c3">
+                        <input type="checkbox" id="f16" Value="Agree" name="x26" required />
+                        I agree to <a href="#">terms & comments</a>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                <div>
+                    <button class="c23" type="submit" Value="submit">Submit</button>
+                    <button class="c23" type="reset" Value="reset">Reset</button>
+                    <a href="//app.cloudqa.io" class="c23">Cancel</a>
+                </div>
+            <input name="x27" type="hidden" value="CfDJ8PfpPsGuHZdPik6nHW7xCQDIN_QnOMpShcoyaVTocraTtDZw6dpkGp9puoFA4vorWsyYfkKEkxCPggY1BeC9onENTwl2XcBW0mRlE0UCs0InC-MWLfhdbvujzPbXiOdKPuhDEqrdmsPjOFrmPVGrNxo" /></form>
+    </div>
+</body>
+</html>

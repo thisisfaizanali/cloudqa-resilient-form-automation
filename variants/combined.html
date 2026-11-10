@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Practice form (combined)</title>
+</head>
+<body>
+    <div class="container">
+        <form method="post" id="f1" action="/Home/Subscribe">
+            <label for="nlname" class="c1">First Name</label>
+            <input id="f2" type="text" name="x1" class="c2" placeholder="Name" />
+            <button class="c3" type="submit">Subscribe</button>
+        </form>
+            <form method="post" class="c4" id="f3" action="/Home/AutomationPracticeForm">
+                <div class="c5">
+                    <div class="c6">
+                        <h2>Form</h2>
+                    </div>
+                    <div class="c7">
+                        <label for="stateofbirth" class="c1"> State of Birth </label>
+                        <select class="c2" id="f4" name="x2">
+                            <option> -- Select Country -- </option>
+                            <option value="Afganistan"> Afganistan </option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Cuba">Cuba</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="Finland">Finland</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Greece">Greece</option>
+                            <option value="Greenland">Greenland</option>
+                            <option value="Hong Kong">Hong Kong</option>
+                            <option value="India">India</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Nepal">Nepal</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Philippines">Philippines</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Zimbabwe">Zimbabwe</option>
+                        </select>
+                    </div>
+                    <div class="c7">
+                        <label name="x3" for="state" class="c1"> State *</label>
+                        <div class="c8">
+                            <div class="c9">
+                        <select class="c2" id="f5" name="x3">
+                            <option> -- Select Country -- </option>
+                            <option value="Afganistan"> Afganistan </option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Bangladesh">Bangladesh</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Cuba">Cuba</option>
+                            <option value="Denmark">Denmark</option>
+                            <option value="Egypt">Egypt</option>
+                            <option value="Finland">Finland</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Greece">Greece</option>
+                            <option value="Greenland">Greenland</option>
+                            <option value="Hong Kong">Hong Kong</option>
+                            <option value="India">India</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Kenya">Kenya</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Nepal">Nepal</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Philippines">Philippines</option>
+                            <option value="Russia">Russia</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Singapore">Singapore</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="United Arab Emirates">United Arab Emirates</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Zimbabwe">Zimbabwe</option>
+                        </select>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="c10">
+                        <tr>
+                            <td><label name="x4" for="country" class="c1">Country</label></td>
+                            <td><input id="f6" type="text" name="x4" placeholder="Country" class="c2" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label name="x5" for="email" class="c1">Email</label></td>
+                            <td><input id="f7" type="text" name="x6" class="c2" placeholder="Email" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label name="x7" for="mobile" class="c1">Mobile #</label></td>
+                            <td><input id="f8" name="x8" class="c2" type="number" maxlength="10" pattern=".{10}" placeholder="Mobile Number" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label for="dob" name="x9" class="c1">Date of Birth</label></td>
+                            <td><input id="f9" type="text" name="x10" placeholder="YYYY-MM-DD" required
+                               pattern="^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$"
+                               title="Enter a date in this format YYYY-MM-DD" class="c2" /></td>
+                        </tr>
+                    </table>
+                    <fieldset class="c7">
+                        <legend>Gender</legend>
+                        <label><input id="f10" type="radio" name="x11" value="Male" /> Male</label>
+                        <label><input id="f11" type="radio" name="x11" value="Female" /> Female</label>
+                        <label><input id="f12" type="radio" name="x11" value="Transgender" /> Transgender</label>
+                    </fieldset>
+                    <fieldset class="c7">
+                        <legend>Preferred Contact Gender</legend>
+                        <label><input id="f13" type="radio" name="x12" value="Male" /> Male</label>
+                        <label><input id="f14" type="radio" name="x12" value="Female" /> Female</label>
+                    </fieldset>
+                    <div class="c11">
+                        <label class="c1">About Yourself</label>
+                        <textarea class="c2" rows="3" placeholder="About Yourself" name="x13"></textarea>
+                    </div>
+                    <div class="c11">
+                        <label class="c1">Description</label>
+                        <textarea id="f15"></textarea>
+                    </div>
+                    <div class="c11">
+                        <label class="c1">Hobbies</label>
+                        <input type="checkbox" id="f16" Value="Dance" name="x14" />
+                        <span name="x15" for="Dance">Dance</span>
+                        <input type="checkbox" id="f17" Value="Reading" name="x14" />
+                        <span name="x16" for="Reading">Reading</span>
+                        <input type="checkbox" id="f18" Value="Cricket" name="x14" />
+                        <span name="x17" for="Cricket">Cricket</span>
+                    </div>
+                    <table class="c10">
+                        <tr>
+                            <td><label for="lname" name="x18" class="c1">Last Name</label></td>
+                            <td><input id="f19" type="text" name="x19" class="c2" placeholder="Surname" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10" style="display:none">
+                        <tr>
+                            <td><label for="fname2" class="c1">First Name</label></td>
+                            <td><input id="f20" type="text" name="x20" class="c2" placeholder="Name" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label for="fathername" class="c1">Father's First Name</label></td>
+                            <td><input id="f21" type="text" name="x21" class="c2" placeholder="Father's name" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label for="fname" name="x22" class="c1">First name:</label></td>
+                            <td><input id="f22" type="text" name="x23" class="c2" placeholder="Name" /></td>
+                        </tr>
+                    </table>
+                    <table class="c10">
+                        <tr>
+                            <td><label for="mname" class="c1">Middle Name</label></td>
+                            <td><input id="f23" type="text" name="x24" class="c2" placeholder="Middle name" /></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="c5">
+                    <div class="c6">
+                        <div class="c5">
+                            <div class="c12">
+                                <div class="c13">
+                                    <div class="c14">
+                                        <span class="c15">
+                                            <i class="c16"></i>
+                                        </span>
+                                        <input type="text" class="c2" placeholder="Username" name="x25" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c17">
+                                <input type="file" name="x26" class="c18" />
+                            </div>
+                            <div class="c19">
+                                <div class="c20">
+                                    <button class="c21" type="button" data-toggle="dropdown">
+                                        Know about us
+                                        <span class="c22"></span>
+                                    </button>
+                                    <ul class="c23">
+                                        <li><a href="//app.cloudqa.io" target="_blank">Applcation Login</a></li>
+                                        <li><a href="//cloudqa.io" target="_blank">Cloudqa Site</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c12">
+                        <div class="c13">
+                            <div class="c14">
+                                <span class="c15">
+                                    <i class="c24"></i>
+                                </span>
+                                <input type="password" class="c2" placeholder="Password" name="x27" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c12">
+                        <div class="c13">
+                            <div class="c14">
+                                <span class="c15">
+                                    <i class="c24"></i>
+                                </span>
+                                <input type="password" class="c2" placeholder="Confirm Password" name="x28" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c5">
+                    <div class="c6">
+                        <input type="checkbox" id="f24" Value="Agree" name="x29" required />
+                        I agree to <a href="#">terms & comments</a>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                <div>
+                    <button class="c3" type="submit" Value="submit">Submit</button>
+                    <button class="c3" type="reset" Value="reset">Reset</button>
+                    <a href="//app.cloudqa.io" class="c3">Cancel</a>
+                </div>
+            <input name="x30" type="hidden" value="CfDJ8PfpPsGuHZdPik6nHW7xCQDIN_QnOMpShcoyaVTocraTtDZw6dpkGp9puoFA4vorWsyYfkKEkxCPggY1BeC9onENTwl2XcBW0mRlE0UCs0InC-MWLfhdbvujzPbXiOdKPuhDEqrdmsPjOFrmPVGrNxo" /></form>
+    </div>
+</body>
+</html>
